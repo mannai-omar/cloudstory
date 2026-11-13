@@ -10,8 +10,7 @@ CloudStory is a portfolio project in two parts:
    point of the project.
 
 > The application layer was scaffolded with AI help so I could put my time into the cloud and DevOps work.
-> Everything under `infra/`, `deploy/` and `.github/` is mine. *(Adjust this note to match how you actually built it.
-> Being upfront about it is the honest choice and reads well to interviewers.)*
+> Everything under `infra/`, `deploy/` and `.github/` is mine.
 
 ---
 
