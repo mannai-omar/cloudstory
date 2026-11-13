@@ -1,0 +1,70 @@
+# Every value that changes between environments comes from an environment variable.
+# See the "Runtime contract" section of the root README.
+
+spring:
+  application:
+    name: cloudstory-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cloudstory}
+    username: ${DB_USERNAME:cloudstory}
+    password: ${DB_PASSWORD:cloudstory}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:5}
+      connection-timeout: 5000
+  flyway:
+    enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+
+# Actuator runs on its own port so health and metrics are never exposed through the public ingress.
+management:
+  server:
+    port: ${MANAGEMENT_PORT:8081}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        # Liveness must not depend on the database: a DB outage should not restart every pod.
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    version: ${APP_VERSION:dev}
+    commit: ${GIT_COMMIT:unknown}
+    environment: ${APP_ENVIRONMENT:local}
+
+cloudstory:
+  version: ${APP_VERSION:dev}
+  commit: ${GIT_COMMIT:unknown}
+  environment: ${APP_ENVIRONMENT:local}
+  # Shared secret CI uses to record deployments. Empty = recording is disabled.
+  deploy-event-token: ${DEPLOY_EVENT_TOKEN:}
+  # Base URL of Prometheus, e.g. http://prometheus-operated.monitoring:9090. Empty = metrics reported as unavailable.
+  prometheus-url: ${PROMETHEUS_URL:}
+  prometheus-timeout: 2s
+  metrics-cache-ttl: 15s

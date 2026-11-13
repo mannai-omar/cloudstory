@@ -1,0 +1,6 @@
+# Enabled in containers with SPRING_PROFILES_ACTIVE=prod.
+# JSON logs are easy to ship to CloudWatch / Loki and query by field.
+logging:
+  structured:
+    format:
+      console: ecs
